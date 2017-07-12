@@ -1,6 +1,6 @@
 # Certificate status
 
-This is a little utility to look up the status of a certificate using OCSP.
+This is a little utility to obtain the (revocation) status of an X.509 certificate.
 
 ## Installation
 
@@ -10,7 +10,8 @@ go get -u github.com/koenrh/certstatus
 
 ## Usage
 
-You only need to provide the PEM-encoded certificate.
+The only argument you need to provided is the path to an X.509 certificate in
+PEM-encoded format.
 
 ```
 $ certstatus certificate.pem
