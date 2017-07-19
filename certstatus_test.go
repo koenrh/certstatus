@@ -48,19 +48,6 @@ func TestGetOCSPServer(t *testing.T) {
 	}
 }
 
-func TestDownloadCertificateUnreachable(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusServiceUnavailable)
-	}))
-	defer server.Close()
-
-	_, err := downloadCertificate(server.URL)
-
-	if err.Error() != "response code is not OK" {
-		t.Fatalf("wrong error message: %s", err.Error())
-	}
-}
-
 func TestCertificateFromBytesNoCertificate(t *testing.T) {
 	in, _ := ioutil.ReadFile("./testdata/private_key.pem")
 	_, err := certificateFromBytes(in)
