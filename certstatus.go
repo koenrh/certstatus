@@ -134,7 +134,7 @@ func getOCSPResponse(cert *x509.Certificate) (*ocsp.Response, error) {
 	options := ocsp.RequestOptions{Hash: crypto.SHA1}
 	request, err := ocsp.CreateRequest(cert, issuer, &options)
 
-	u, err := url.Parse(ocspServer)
+	url, err := url.Parse(ocspServer)
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", ocspServer, bytes.NewBuffer(request))
@@ -142,7 +142,7 @@ func getOCSPResponse(cert *x509.Certificate) (*ocsp.Response, error) {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 		os.Exit(1)
 	}
-	req.Host = u.Hostname()
+	req.Host = url.Hostname()
 	req.Header.Set("content-type", "application/ocsp-request")
 
 	response, err := client.Do(req)
