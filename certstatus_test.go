@@ -1,11 +1,37 @@
 package main
 
 import (
+	"errors"
 	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 )
+
+type stubHTTPClient struct{}
+
+func (stubHTTPClient) get(url string) ([]byte, error) {
+	if url == "http://cacerts.digicert.com/DigiCertSHA2SecureServerCA.crt" {
+		return ioutil.ReadFile("./testdata/issuer.pem")
+	}
+
+	return nil, errors.New("Unrecognised URL: " + url)
+}
+
+func TestGetIssuerCert(t *testing.T) {
+	cert, err := readCertificate("./testdata/certificate.pem")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client := &stubHTTPClient{}
+	issCert, err := getIssuerCertificate(client, cert)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if issCert.Issuer.CommonName != "DigiCert Global Root CA" {
+		t.Fatal(issCert.Issuer.CommonName)
+	}
+}
 
 func TestReadCertificate(t *testing.T) {
 	_, err := readCertificate("./testdata/certificate.pem")
