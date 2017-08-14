@@ -23,7 +23,6 @@ var (
 	errNoCertificate             = errors.New("no certificate")
 	errNoIssuerCertificate       = errors.New("no issuer certificate")
 	errNoOCSPServersFound        = errors.New("no OCSP servers found")
-	errResponseNotOK             = errors.New("response code is not OK")
 )
 
 // HTTPClient is an interface for fetching HTTP responses
