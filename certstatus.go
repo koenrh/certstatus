@@ -162,7 +162,7 @@ func getOCSPResponse(cert *x509.Certificate) (*ocsp.Response, error) {
 		os.Exit(1)
 	}
 
-	parsedResponse, err := ocsp.ParseResponse(body, issuer)
+	parsedResponse, err := ocsp.ParseResponseForCert(body, cert, issuer)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
