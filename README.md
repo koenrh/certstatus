@@ -6,7 +6,8 @@ This is a little utility to obtain the (revocation) status of an X.509 certifica
 
 ## Installation
 
-Make sure you have set up your `$GOPATH` correctly, and you have included `$GOPATH/bin` in your `$PATH`, then run the following command.
+Make sure you have set up your `$GOPATH` correctly, and you have included
+`$GOPATH/bin` in your `$PATH`, then run the following command.
 
 ```bash
 go get -u github.com/koenrh/certstatus
