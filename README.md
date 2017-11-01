@@ -4,7 +4,7 @@
 
 This is a little utility to obtain the (revocation) status of an X.509 certificate.
 
-![certstatus_demo](https://user-images.githubusercontent.com/1307291/32279576-6e31c484-bf19-11e7-8e67-8a378023a233.gif)
+![certstatusdemo](https://user-images.githubusercontent.com/1307291/32281596-8e9d3ad6-bf1f-11e7-9688-c2c2add068a8.gif)
 
 ## Installation
 
