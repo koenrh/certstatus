@@ -4,7 +4,11 @@
 
 This is a little utility to obtain the (revocation) status of an X.509 certificate.
 
+![certstatus_demo](https://user-images.githubusercontent.com/1307291/32279576-6e31c484-bf19-11e7-8e67-8a378023a233.gif)
+
 ## Installation
+
+Make sure you have set up your `$GOPATH` correctly, and you have included `$GOPATH/bin` in your `$PATH`, then run the following command.
 
 ```bash
 go get -u github.com/koenrh/certstatus
