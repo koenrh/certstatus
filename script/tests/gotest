@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# script/test: Run the go test suite
+
+set -e
+
+cd "$(dirname "$0")/../.."
+
+go fmt
+go test -v -race -coverprofile=coverage.txt -covermode=atomic

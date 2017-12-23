@@ -1,4 +1,10 @@
 #!/bin/sh
 
-go fmt
-go test -v -race -coverprofile=coverage.txt -covermode=atomic
+# script/test: Run the test suite and linters.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+script/tests/gometalinter
+script/tests/gotest

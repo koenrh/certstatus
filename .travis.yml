@@ -1,8 +1,7 @@
 language: go
-script:
-  - script/test
-after_success:
-  - script/report_code_coverage
+before_script: script/setup
+script: script/test
+after_success: script/report_code_coverage
 notifications:
   email: false
 env:

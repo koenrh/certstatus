@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# script/tests/gometalinter: Run linters and static analysis
+
+set -e
+
+cd "$(dirname "$0")/../.."
+
+gometalinter \
+  --vendor \
+  --tests \
+  --errors \
+  --aggregate \
+  --line-length=100 \
+  --deadline=300s \
+  --exclude='error return value not checked.*(Close|Log|Print).*\(errcheck\)$' \
+  --exclude='.*_test\.go:.*error return value not checked.*\(errcheck\)$' \
+  --disable=gotype \
+  --enable=lll \
+  --enable=goimports \
+  --enable=gofmt \
+  --enable=misspell \
+  --enable=unparam \
+  --enable=unused \
+  ./...
