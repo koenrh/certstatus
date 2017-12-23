@@ -39,7 +39,7 @@ func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
 	return nil, errors.New("Unrecognised URL: " + "")
 }
 
-func TestMainWithArguments(test *testing.T) {
+func TestMainWithArguments(t *testing.T) {
 	client = &MockHttpClient{}
 	os.Args = []string{
 		"certstatus",
