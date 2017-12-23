@@ -25,7 +25,8 @@ var (
 	errNoIssuerCertificate       = errors.New("no issuer certificate")
 	errNoOCSPServersFound        = errors.New("no OCSP servers found")
 
-	out io.Writer = os.Stdout // substituted during testing
+	out    io.Writer  = os.Stdout // substituted during testing
+	client HttpClient = &http.Client{}
 )
 
 // HTTPClient is an interface for fetching HTTP responses
@@ -46,14 +47,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	cert, err := readCertificate(flag.Args()[0])
+	printCertificateStatus(client, flag.Args()[0])
+}
+
+func printCertificateStatus(client HttpClient, path string) {
+	cert, err := readCertificate(path)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 		os.Exit(1)
 	}
-
-	client := &http.Client{}
 
 	issuer, err := getIssuerCertificate(client, cert)
 	if err != nil {

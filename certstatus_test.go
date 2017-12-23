@@ -6,21 +6,25 @@ import (
 	"golang.org/x/crypto/ocsp"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 )
 
 type MockHttpClient struct{}
 
 func (m *MockHttpClient) Get(url string) (*http.Response, error) {
+	var dat []byte
+
 	if url == "http://cacerts.digicert.com/DigiCertSHA2SecureServerCA.crt" {
-		issuerCertBytes, _ := ioutil.ReadFile("./testdata/issuer.pem")
-		response := &http.Response{
-			Body: ioutil.NopCloser(bytes.NewBuffer(issuerCertBytes)),
-		}
-		return response, nil
+		dat, _ = ioutil.ReadFile("./testdata/issuer.pem")
+	} else if url == "http://cacerts.digicert.com/DigiCertSHA2ExtendedValidationServerCA.crt" {
+		dat, _ = ioutil.ReadFile("./testdata/DigiCertSHA2ExtendedValidationServerCA.pem")
 	}
 
-	return nil, errors.New("Unrecognised URL: " + url)
+	response := &http.Response{
+		Body: ioutil.NopCloser(bytes.NewBuffer(dat)),
+	}
+	return response, nil
 }
 
 func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
@@ -33,6 +37,22 @@ func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
 	}
 
 	return nil, errors.New("Unrecognised URL: " + "")
+}
+
+func TestMainWithArguments(test *testing.T) {
+	client = &MockHttpClient{}
+	os.Args = []string{
+		"certstatus",
+		"./testdata/twitter.pem",
+	}
+	main()
+}
+
+func TestPrintCertificateStatus(t *testing.T) {
+	path := "./testdata/twitter.pem"
+	client := &MockHttpClient{}
+
+	printCertificateStatus(client, path)
 }
 
 func TestGetOCSPResponse(t *testing.T) {
