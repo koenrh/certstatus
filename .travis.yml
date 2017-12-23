@@ -1,8 +1,7 @@
 language: go
-script:
-  - script/test
-after_success:
-  - script/report_code_coverage
+before_script: script/bootstrap
+script: script/test
+after_success: script/report_code_coverage
 notifications:
   email: false
 env:

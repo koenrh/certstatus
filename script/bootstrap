@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# script/bootstrap: Install project dependencies.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+mkdir -p $GOPATH/bin $GOPATH/src
+
+command -v gometalinter >/dev/null 2>&1 || go get -u github.com/alecthomas/gometalinter
+gometalinter --install --update
