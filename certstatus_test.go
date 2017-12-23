@@ -6,21 +6,26 @@ import (
 	"golang.org/x/crypto/ocsp"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"strings"
 	"testing"
 )
 
 type MockHttpClient struct{}
 
 func (m *MockHttpClient) Get(url string) (*http.Response, error) {
+	var dat []byte
+
 	if url == "http://cacerts.digicert.com/DigiCertSHA2SecureServerCA.crt" {
-		issuerCertBytes, _ := ioutil.ReadFile("./testdata/issuer.pem")
-		response := &http.Response{
-			Body: ioutil.NopCloser(bytes.NewBuffer(issuerCertBytes)),
-		}
-		return response, nil
+		dat, _ = ioutil.ReadFile("./testdata/issuer.pem")
+	} else if url == "http://cacerts.digicert.com/DigiCertSHA2ExtendedValidationServerCA.crt" {
+		dat, _ = ioutil.ReadFile("./testdata/DigiCertSHA2ExtendedValidationServerCA.pem")
 	}
 
-	return nil, errors.New("Unrecognised URL: " + url)
+	response := &http.Response{
+		Body: ioutil.NopCloser(bytes.NewBuffer(dat)),
+	}
+	return response, nil
 }
 
 func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
@@ -33,6 +38,43 @@ func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
 	}
 
 	return nil, errors.New("Unrecognised URL: " + "")
+}
+
+func TestMainWithArguments(t *testing.T) {
+	out = new(bytes.Buffer) // capture output
+
+	client = &MockHttpClient{}
+	os.Args = []string{
+		"certstatus",
+		"./testdata/twitter.pem",
+	}
+	main()
+
+	expected := "Status: Good"
+
+	got := out.(*bytes.Buffer).String()
+	if !strings.Contains(got, expected) {
+		t.Errorf("expected %q, got %q", expected, got)
+	}
+}
+
+func TestPrintCertificateStatus(t *testing.T) {
+	path := "./testdata/twitter.pem"
+	client := &MockHttpClient{}
+
+	out = new(bytes.Buffer) // capture output
+	printCertificateStatus(client, path)
+
+	expected := "Serial number: 16190166165489431910151563605275097819\n\n" +
+		"Status: Good\n\n" +
+		"Produced at: 2017-12-23 06:30:33 +0000 UTC\n" +
+		"This update: 2017-12-23 06:30:33 +0000 UTC\n" +
+		"Next update: 2017-12-30 05:45:33 +0000 UTC\n"
+
+	got := out.(*bytes.Buffer).String()
+	if got != expected {
+		t.Errorf("expected %q, got %q", expected, got)
+	}
 }
 
 func TestGetOCSPResponse(t *testing.T) {
