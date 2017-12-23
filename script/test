@@ -1,5 +1,4 @@
 #!/bin/sh
 
 go fmt
-#go test -v ./...
-go test -race -coverprofile=coverage.txt -covermode=atomic
+go test -v -race -coverprofile=coverage.txt -covermode=atomic
