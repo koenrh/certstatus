@@ -1,6 +1,7 @@
 # Certificate status
 
 [![Build Status](https://travis-ci.org/koenrh/certstatus.svg?branch=master)](https://travis-ci.org/koenrh/certstatus)
+[![codecov](https://codecov.io/gh/koenrh/certstatus/branch/master/graph/badge.svg)](https://codecov.io/gh/koenrh/certstatus)
 
 This is a little utility to obtain the (revocation) status of an X.509 certificate.
 
