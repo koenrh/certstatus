@@ -5,17 +5,55 @@ import (
 	"errors"
 	"golang.org/x/crypto/ocsp"
 	"io/ioutil"
+	"net/http"
 	"testing"
 )
 
-type stubHTTPClient struct{}
+type MockHttpClient struct{}
 
-func (stubHTTPClient) get(url string) ([]byte, error) {
+func (m *MockHttpClient) Get(url string) (*http.Response, error) {
 	if url == "http://cacerts.digicert.com/DigiCertSHA2SecureServerCA.crt" {
-		return ioutil.ReadFile("./testdata/issuer.pem")
+		issuerCertBytes, _ := ioutil.ReadFile("./testdata/issuer.pem")
+		response := &http.Response{
+			Body: ioutil.NopCloser(bytes.NewBuffer(issuerCertBytes)),
+		}
+		return response, nil
 	}
 
 	return nil, errors.New("Unrecognised URL: " + url)
+}
+
+func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
+	if r.URL.String() == "http://ocsp.digicert.com" {
+		ocspResponseBytes, _ := ioutil.ReadFile("./testdata/twitter_ocsp_response_v1.der")
+		response := &http.Response{
+			Body: ioutil.NopCloser(bytes.NewBuffer(ocspResponseBytes)),
+		}
+		return response, nil
+	}
+
+	return nil, errors.New("Unrecognised URL: " + "")
+}
+
+func TestGetOCSPResponse(t *testing.T) {
+	cert, err := readCertificate("./testdata/twitter.pem")
+	if err != nil {
+		t.Fatal("Could not read test certificate.")
+	}
+
+	issuer, err := readCertificate("./testdata/DigiCertSHA2ExtendedValidationServerCA.pem")
+	if err != nil {
+		t.Fatal("Could not read test issuer certificate.")
+	}
+
+	client := &MockHttpClient{}
+	resp, err := getOCSPResponse(client, cert, issuer)
+	if err != nil {
+		t.Fatal("uh-oh")
+	}
+
+	if resp != nil {
+	}
 }
 
 func TestGetIssuerCert(t *testing.T) {
@@ -24,7 +62,7 @@ func TestGetIssuerCert(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client := &stubHTTPClient{}
+	client := &MockHttpClient{}
 	issCert, err := getIssuerCertificate(client, cert)
 	if err != nil {
 		t.Fatal(err)

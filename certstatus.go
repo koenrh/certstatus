@@ -29,8 +29,9 @@ var (
 )
 
 // HTTPClient is an interface for fetching HTTP responses
-type HTTPClient interface {
-	get(url string) ([]byte, error)
+type HttpClient interface {
+	Get(string) (*http.Response, error)
+	Do(req *http.Request) (*http.Response, error)
 }
 
 func main() {
@@ -52,28 +53,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	resp, err := getOCSPResponse(cert)
+	client := &http.Client{}
+
+	issuer, err := getIssuerCertificate(client, cert)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+		os.Exit(1)
+	}
+
+	resp, err := getOCSPResponse(client, cert, issuer)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 		os.Exit(1)
 	}
 	printStatusResponse(resp)
-}
-
-type httpClient struct{}
-
-func (httpClient) get(url string) ([]byte, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, errFailedToGetResource
-	}
-	defer resp.Body.Close()
-
-	in, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errFailedToReadResponseBody
-	}
-	return in, nil
 }
 
 func certificateFromBytes(bytes []byte) (*x509.Certificate, error) {
@@ -119,15 +112,8 @@ func getOCSPServer(cert *x509.Certificate) (string, error) {
 	return ocspServers[0], nil
 }
 
-func getOCSPResponse(cert *x509.Certificate) (*ocsp.Response, error) {
+func getOCSPResponse(client HttpClient, cert *x509.Certificate, issuer *x509.Certificate) (*ocsp.Response, error) {
 	ocspServer, err := getOCSPServer(cert)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
-	}
-
-	issuer, err := getIssuerCertificate(httpClient{}, cert)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 		os.Exit(1)
@@ -138,7 +124,6 @@ func getOCSPResponse(cert *x509.Certificate) (*ocsp.Response, error) {
 
 	url, err := url.Parse(ocspServer)
 
-	client := &http.Client{}
 	req, err := http.NewRequest("POST", ocspServer, bytes.NewBuffer(request))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
@@ -151,13 +136,7 @@ func getOCSPResponse(cert *x509.Certificate) (*ocsp.Response, error) {
 	if err != nil {
 		return nil, errFailedToFetchOCSPResponse
 	}
-
-	defer func() {
-		if err = response.Body.Close(); err != nil {
-			fmt.Println("Error when closing:", err)
-			os.Exit(1)
-		}
-	}()
+	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -175,20 +154,28 @@ func getOCSPResponse(cert *x509.Certificate) (*ocsp.Response, error) {
 	return parsedResponse, nil
 }
 
-func getIssuerCertificate(client HTTPClient, cert *x509.Certificate) (*x509.Certificate, error) {
+func getIssuerCertificate(client HttpClient, cert *x509.Certificate) (*x509.Certificate, error) {
 	var (
 		issCert *x509.Certificate
-		err     error
-		resp    []byte
 	)
 
 	for _, url := range cert.IssuingCertificateURL {
-		resp, err = client.get(url)
+		resp, err := client.Get(url)
 		if err != nil {
 			continue
 		}
 
-		issCert, err = certificateFromBytes(resp)
+		if err != nil {
+			return nil, errFailedToGetResource
+		}
+		defer resp.Body.Close()
+
+		in, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, errFailedToReadResponseBody
+		}
+
+		issCert, err = certificateFromBytes(in)
 		if err != nil {
 			return nil, errNoIssuerCertificate
 		}
