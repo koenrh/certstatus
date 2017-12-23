@@ -98,11 +98,7 @@ func TestCertificateFromBytesNoCertificate(t *testing.T) {
 
 func TestPrintStatusResponse(t *testing.T) {
 	ocsp_der, _ := ioutil.ReadFile("./testdata/twitter_ocsp_response_v1.der")
-	resp, err := ocsp.ParseResponse(ocsp_der, nil)
-
-	if err != nil {
-		t.Fatal(err)
-	}
+	resp, _ := ocsp.ParseResponse(ocsp_der, nil)
 
 	out = new(bytes.Buffer) // capture output
 
@@ -111,6 +107,28 @@ func TestPrintStatusResponse(t *testing.T) {
 		"Produced at: 2017-12-23 06:30:33 +0000 UTC\n" +
 		"This update: 2017-12-23 06:30:33 +0000 UTC\n" +
 		"Next update: 2017-12-30 05:45:33 +0000 UTC\n"
+
+	printStatusResponse(resp)
+
+	got := out.(*bytes.Buffer).String()
+	if got != expected {
+		t.Errorf("expected %q, got %q", expected, got)
+	}
+}
+
+func TestPrintStatusResponseRevoked(t *testing.T) {
+	ocsp_der, _ := ioutil.ReadFile("./testdata/cisco_ocsp_response_revoked.der")
+	resp, _ := ocsp.ParseResponse(ocsp_der, nil)
+
+	out = new(bytes.Buffer) // capture output
+
+	expected := "Serial number: 582831098329266023459877175593458587837818271346\n\n" +
+		"Status: Revoked\n" +
+		"Reason: Key compromise\n" +
+		"Revoked at: 2017-06-18 17:57:00 +0000 UTC\n\n" +
+		"Produced at: 2017-12-23 16:24:32 +0000 UTC\n" +
+		"This update: 2017-12-23 16:24:32 +0000 UTC\n" +
+		"Next update: 2017-12-25 16:24:32 +0000 UTC\n"
 
 	printStatusResponse(resp)
 
