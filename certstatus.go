@@ -47,29 +47,32 @@ func main() {
 		os.Exit(1)
 	}
 
-	printCertificateStatus(client, flag.Args()[0])
-}
-
-func printCertificateStatus(client HttpClient, path string) {
-	cert, err := readCertificate(path)
-
+	err := printCertificateStatus(client, flag.Args()[0])
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 		os.Exit(1)
+	}
+}
+
+func printCertificateStatus(client HttpClient, path string) error {
+	cert, err := readCertificate(path)
+
+	if err != nil {
+		return err
 	}
 
 	issuer, err := getIssuerCertificate(client, cert)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	resp, err := getOCSPResponse(client, cert, issuer)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return err
 	}
+
 	printStatusResponse(resp)
+	return nil
 }
 
 func certificateFromBytes(bytes []byte) (*x509.Certificate, error) {

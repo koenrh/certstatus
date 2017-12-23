@@ -60,7 +60,7 @@ func TestMainWithArguments(t *testing.T) {
 
 func TestPrintCertificateStatus(t *testing.T) {
 	path := "./testdata/twitter.pem"
-	client := &MockHttpClient{}
+	client = &MockHttpClient{}
 
 	out = new(bytes.Buffer) // capture output
 	printCertificateStatus(client, path)
