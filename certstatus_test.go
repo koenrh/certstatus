@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -40,19 +41,40 @@ func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
 }
 
 func TestMainWithArguments(t *testing.T) {
+	out = new(bytes.Buffer) // capture output
+
 	client = &MockHttpClient{}
 	os.Args = []string{
 		"certstatus",
 		"./testdata/twitter.pem",
 	}
 	main()
+
+	expected := "Status: Good"
+
+	got := out.(*bytes.Buffer).String()
+	if !strings.Contains(got, expected) {
+		t.Errorf("expected %q, got %q", expected, got)
+	}
 }
 
 func TestPrintCertificateStatus(t *testing.T) {
 	path := "./testdata/twitter.pem"
 	client := &MockHttpClient{}
 
+	out = new(bytes.Buffer) // capture output
 	printCertificateStatus(client, path)
+
+	expected := "Serial number: 16190166165489431910151563605275097819\n\n" +
+		"Status: Good\n\n" +
+		"Produced at: 2017-12-23 06:30:33 +0000 UTC\n" +
+		"This update: 2017-12-23 06:30:33 +0000 UTC\n" +
+		"Next update: 2017-12-30 05:45:33 +0000 UTC\n"
+
+	got := out.(*bytes.Buffer).String()
+	if got != expected {
+		t.Errorf("expected %q, got %q", expected, got)
+	}
 }
 
 func TestGetOCSPResponse(t *testing.T) {
