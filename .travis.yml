@@ -1,5 +1,5 @@
 language: go
-before_script: script/bootstrap
+before_script: script/setup
 script: script/test
 after_success: script/report_code_coverage
 notifications:
