@@ -47,12 +47,12 @@ func TestGetOCSPResponse(t *testing.T) {
 	}
 
 	client := &MockHttpClient{}
-	resp, err := getOCSPResponse(client, cert, issuer)
-	if err != nil {
-		t.Fatal("uh-oh")
-	}
+	resp, _ := getOCSPResponse(client, cert, issuer)
 
-	if resp != nil {
+	expected := "16190166165489431910151563605275097819"
+
+	if resp.SerialNumber.String() != expected {
+		t.Errorf("expected %q, got %q", expected, resp.SerialNumber.String())
 	}
 }
 
