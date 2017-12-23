@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"golang.org/x/crypto/ocsp"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -23,6 +24,8 @@ var (
 	errNoCertificate             = errors.New("no certificate")
 	errNoIssuerCertificate       = errors.New("no issuer certificate")
 	errNoOCSPServersFound        = errors.New("no OCSP servers found")
+
+	out io.Writer = os.Stdout // substituted during testing
 )
 
 // HTTPClient is an interface for fetching HTTP responses
@@ -200,17 +203,17 @@ func getIssuerCertificate(client HTTPClient, cert *x509.Certificate) (*x509.Cert
 }
 
 func printStatusResponse(resp *ocsp.Response) {
-	fmt.Printf("Serial number: %s\n\n", resp.SerialNumber)
-	fmt.Printf("Status: %s\n", statusMessage(resp.Status))
+	fmt.Fprintf(out, "Serial number: %s\n\n", resp.SerialNumber)
+	fmt.Fprintf(out, "Status: %s\n", statusMessage(resp.Status))
 
 	if resp.Status == ocsp.Revoked {
-		fmt.Printf("Reason: %s\n", revocationReason(resp.RevocationReason))
-		fmt.Printf("Revoked at: %s\n", resp.RevokedAt)
+		fmt.Fprintf(out, "Reason: %s\n", revocationReason(resp.RevocationReason))
+		fmt.Fprintf(out, "Revoked at: %s\n", resp.RevokedAt)
 	}
 
-	fmt.Printf("\nProduced at: %s\n", resp.ProducedAt)
-	fmt.Printf("This update: %s\n", resp.ThisUpdate)
-	fmt.Printf("Next update: %s\n", resp.NextUpdate)
+	fmt.Fprintf(out, "\nProduced at: %s\n", resp.ProducedAt)
+	fmt.Fprintf(out, "This update: %s\n", resp.ThisUpdate)
+	fmt.Fprintf(out, "Next update: %s\n", resp.NextUpdate)
 }
 
 var (
