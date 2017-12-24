@@ -81,3 +81,22 @@ func TestGetCRLResponse(t *testing.T) {
 		t.Fatal("err")
 	}
 }
+
+func TestGetCRLResponseNotRevoked(t *testing.T) {
+	client = &MockHttpClient{}
+	cert, err := readCertificate("./testdata/twitter.pem")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	st, err := GetCRLResponse(client, cert)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if st.Status != "Good" {
+		t.Fatal("err")
+	}
+}
