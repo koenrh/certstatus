@@ -34,50 +34,49 @@ type HttpClient interface {
 
 func main() {
 	flag.Usage = func() {
-		fmt.Printf("usage: %s <pem>\n", os.Args[0])
+		fmt.Printf("usage: %s <command> <pem>\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 
 	flag.Parse()
-	if flag.NArg() == 0 {
+	if flag.NArg() < 2 {
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	err := printCertificateStatus(client, flag.Args()[0])
+	// TODO: move to method that returns both cert + issuer?
+	path := os.Args[2]
+	cert, err := readCertificate(path)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 		os.Exit(1)
 	}
-}
-
-func printCertificateStatus(client HttpClient, path string) error {
-	cert, err := readCertificate(path)
-
-	if err != nil {
-		return err
-	}
 
 	issuer, err := getIssuerCertificate(client, cert)
 	if err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+		os.Exit(1)
 	}
 
-	// OCSP
-	resp, err := getOCSPResponse(client, cert, issuer)
-	if err != nil {
-		return err
-	}
-	printStatusResponse(resp)
+	switch os.Args[1] {
+	case "ocsp":
+		resp, err := getOCSPResponse(client, cert, issuer)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+			os.Exit(1)
+		}
+		printStatusResponse(resp)
 
-	// CRL
-	crlresp, err := GetCRLResponse(client, cert)
-	//fmt.Print(crlresp.String())
-	if crlresp != nil {
-		fmt.Print(crlresp.String())
-	}
+	case "crl":
+		crlresp, _ := GetCRLResponse(client, cert)
+		if crlresp != nil {
+			fmt.Print(crlresp.String())
+		}
 
-	return nil
+	default:
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
 }
 
 func certificateFromBytes(bytes []byte) (*x509.Certificate, error) {

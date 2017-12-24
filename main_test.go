@@ -6,7 +6,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -35,39 +37,21 @@ func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
 	return nil, errors.New("Unrecognised URL: " + "")
 }
 
-//func TestMainWithArguments(t *testing.T) {
-//	out = new(bytes.Buffer) // capture output
-//
-//	client = &MockHttpClient{}
-//	os.Args = []string{
-//		"certstatus",
-//		"./testdata/twitter.pem",
-//	}
-//	main()
-//
-//	expected := "Status: Good"
-//
-//	got := out.(*bytes.Buffer).String()
-//	if !strings.Contains(got, expected) {
-//		t.Errorf("expected %q, got %q", expected, got)
-//	}
-//}
-
-func TestPrintCertificateStatus(t *testing.T) {
-	path := "./testdata/twitter.pem"
-	client = &MockHttpClient{}
-
+func TestMainOCSP(t *testing.T) {
 	out = new(bytes.Buffer) // capture output
-	printCertificateStatus(client, path)
 
-	expected := "Serial number: 16190166165489431910151563605275097819\n\n" +
-		"Status: Good\n\n" +
-		"Produced at: 2017-12-23 06:30:33 +0000 UTC\n" +
-		"This update: 2017-12-23 06:30:33 +0000 UTC\n" +
-		"Next update: 2017-12-30 05:45:33 +0000 UTC\n"
+	client = &MockHttpClient{}
+	os.Args = []string{
+		"certstatus",
+		"ocsp",
+		"./testdata/twitter.pem",
+	}
+	main()
+
+	expected := "Status: Good"
 
 	got := out.(*bytes.Buffer).String()
-	if got != expected {
+	if !strings.Contains(got, expected) {
 		t.Errorf("expected %q, got %q", expected, got)
 	}
 }
