@@ -48,6 +48,21 @@ func TestFindCert(t *testing.T) {
 	}
 }
 
+func TestFindNonExistingRevokedCert(t *testing.T) {
+	// NOTE: DigiCert SHA2 Extended Validation Server CA CRL
+	crl, _ := ioutil.ReadFile("./testdata/sha2-ev-server-g2.crl")
+	resp, err := x509.ParseCRL(crl)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	test := FindCert(big.NewInt(0), resp)
+
+	if test != nil {
+		t.Error("did not expect to find a revoked certificate")
+	}
+}
+
 func TestGetCRLResponse(t *testing.T) {
 	client = &MockHttpClient{}
 	cert, err := readCertificate("./testdata/cisco_revoked.pem")
