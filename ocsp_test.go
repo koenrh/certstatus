@@ -37,8 +37,8 @@ func TestGetOCSPServer(t *testing.T) {
 }
 
 func TestPrintStatusResponse(t *testing.T) {
-	ocsp_der, _ := ioutil.ReadFile("./testdata/twitter_ocsp_response_v1.der")
-	resp, _ := ocsp.ParseResponse(ocsp_der, nil)
+	rawResp, _ := ioutil.ReadFile("./testdata/twitter_ocsp_response_v1.der")
+	resp, _ := ocsp.ParseResponse(rawResp, nil)
 
 	out = new(bytes.Buffer) // capture output
 
@@ -57,8 +57,8 @@ func TestPrintStatusResponse(t *testing.T) {
 }
 
 func TestPrintStatusResponseRevoked(t *testing.T) {
-	ocsp_der, _ := ioutil.ReadFile("./testdata/cisco_ocsp_response_revoked.der")
-	resp, _ := ocsp.ParseResponse(ocsp_der, nil)
+	rawResp, _ := ioutil.ReadFile("./testdata/cisco_ocsp_response_revoked.der")
+	resp, _ := ocsp.ParseResponse(rawResp, nil)
 
 	out = new(bytes.Buffer) // capture output
 
