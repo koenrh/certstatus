@@ -18,7 +18,7 @@ func TestGetOCSPResponse(t *testing.T) {
 		t.Fatal("Could not read test issuer certificate.")
 	}
 
-	client := &MockHttpClient{}
+	client := &MockHTTPClient{}
 	resp, _ := getOCSPResponse(client, cert, issuer)
 
 	expected := "16190166165489431910151563605275097819"

@@ -12,9 +12,9 @@ import (
 	"testing"
 )
 
-type MockHttpClient struct{}
+type MockHTTPClient struct{}
 
-func (m *MockHttpClient) Get(url2 string) (*http.Response, error) {
+func (m *MockHTTPClient) Get(url2 string) (*http.Response, error) {
 	u, _ := url.Parse(url2)
 	p := filepath.Clean(u.Path)
 	dat, _ := ioutil.ReadFile("./testdata" + p)
@@ -25,7 +25,7 @@ func (m *MockHttpClient) Get(url2 string) (*http.Response, error) {
 	return response, nil
 }
 
-func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
+func (m *MockHTTPClient) Do(r *http.Request) (*http.Response, error) {
 	if r.URL.String() == "http://ocsp.digicert.com" {
 		ocspResponseBytes, _ := ioutil.ReadFile("./testdata/twitter_ocsp_response_v1.der")
 		response := &http.Response{
@@ -40,7 +40,7 @@ func (m *MockHttpClient) Do(r *http.Request) (*http.Response, error) {
 func TestMainOCSP(t *testing.T) {
 	out = new(bytes.Buffer) // capture output
 
-	client = &MockHttpClient{}
+	client = &MockHTTPClient{}
 	os.Args = []string{
 		"certstatus",
 		"ocsp",
@@ -62,7 +62,7 @@ func TestGetIssuerCert(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client := &MockHttpClient{}
+	client := &MockHTTPClient{}
 	issCert, err := getIssuerCertificate(client, cert)
 	if err != nil {
 		t.Fatal(err)

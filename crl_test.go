@@ -64,7 +64,7 @@ func TestFindNonExistingRevokedCert(t *testing.T) {
 }
 
 func TestGetCRLResponse(t *testing.T) {
-	client = &MockHttpClient{}
+	client = &MockHTTPClient{}
 	cert, err := readCertificate("./testdata/cisco_revoked.pem")
 
 	if err != nil {
@@ -84,7 +84,7 @@ func TestGetCRLResponse(t *testing.T) {
 }
 
 func TestGetCRLResponseNotRevoked(t *testing.T) {
-	client = &MockHttpClient{}
+	client = &MockHTTPClient{}
 	cert, err := readCertificate("./testdata/twitter.pem")
 
 	if err != nil {

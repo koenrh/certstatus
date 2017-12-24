@@ -23,11 +23,11 @@ var (
 	errNoCRLDistributionPointsFound = errors.New("no CRL distribution points found")
 
 	out    io.Writer  = os.Stdout // substituted during testing
-	client HttpClient = &http.Client{}
+	client HTTPClient = &http.Client{}
 )
 
 // HTTPClient is an interface for fetching HTTP responses
-type HttpClient interface {
+type HTTPClient interface {
 	Get(string) (*http.Response, error)
 	Do(req *http.Request) (*http.Response, error)
 }
@@ -116,7 +116,7 @@ func readCertificate(path string) (*x509.Certificate, error) {
 	return cert, nil
 }
 
-func getIssuerCertificate(client HttpClient, cert *x509.Certificate) (*x509.Certificate, error) {
+func getIssuerCertificate(client HTTPClient, cert *x509.Certificate) (*x509.Certificate, error) {
 	var (
 		issCert *x509.Certificate
 	)

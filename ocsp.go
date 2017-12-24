@@ -19,7 +19,7 @@ func getOCSPServer(cert *x509.Certificate) (string, error) {
 	return ocspServers[0], nil
 }
 
-func getOCSPResponse(client HttpClient, cert *x509.Certificate, issuer *x509.Certificate) (*ocsp.Response, error) {
+func getOCSPResponse(client HTTPClient, cert *x509.Certificate, issuer *x509.Certificate) (*ocsp.Response, error) {
 	ocspServer, err := getOCSPServer(cert)
 	if err != nil {
 		return nil, err

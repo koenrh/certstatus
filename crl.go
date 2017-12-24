@@ -43,7 +43,7 @@ func findCert(serialNumber *big.Int, crlList *pkix.CertificateList) *pkix.Revoke
 	return nil
 }
 
-func GetCRLResponse(client HttpClient, cert *x509.Certificate) (*Status, error) {
+func GetCRLResponse(client HTTPClient, cert *x509.Certificate) (*Status, error) {
 	endpoint, err := getCRLDistributionPoint(cert)
 	if err != nil {
 		return nil, err
