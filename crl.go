@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/x509"
 	"crypto/x509/pkix"
-	"errors"
 	"io/ioutil"
 	"math/big"
 )
@@ -59,13 +58,16 @@ func GetCRLResponse(client HttpClient, cert *x509.Certificate) (*Status, error) 
 
 	revCert := FindCert(cert.SerialNumber, crlList)
 
-	if revCert == nil {
-		return nil, errors.New("not revoked")
+	if revCert != nil {
+		return &Status{
+			SerialNumber: cert.SerialNumber,
+			Status:       "Revoked",
+			RevokedAt:    revCert.RevocationTime,
+		}, nil
+	} else {
+		return &Status{
+			SerialNumber: cert.SerialNumber,
+			Status:       "Good",
+		}, nil
 	}
-
-	return &Status{
-		SerialNumber: cert.SerialNumber,
-		Status:       "Revoked",
-		RevokedAt:    revCert.RevocationTime,
-	}, nil
 }

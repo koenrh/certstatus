@@ -68,10 +68,12 @@ func main() {
 		printStatusResponse(resp)
 
 	case "crl":
-		crlresp, _ := GetCRLResponse(client, cert)
-		if crlresp != nil {
-			fmt.Print(crlresp.String())
+		st, err := GetCRLResponse(client, cert)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+			os.Exit(1)
 		}
+		fmt.Print(st.String())
 
 	default:
 		flag.PrintDefaults()

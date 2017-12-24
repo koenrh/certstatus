@@ -24,7 +24,9 @@ func (s Status) String() string {
 		buf.WriteString(fmt.Sprintf("Reason: %s\n", s.Reason))
 	}
 
-	buf.WriteString(fmt.Sprintf("Revoked at: %s\n", s.RevokedAt.String()))
+	if !s.RevokedAt.IsZero() {
+		buf.WriteString(fmt.Sprintf("Revoked at: %s\n", s.RevokedAt.String()))
+	}
 
 	return buf.String()
 }
