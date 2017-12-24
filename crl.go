@@ -43,6 +43,7 @@ func findCert(serialNumber *big.Int, crlList *pkix.CertificateList) *pkix.Revoke
 	return nil
 }
 
+// GetCRLResponse returns the CRL status for the specified certificate.
 func GetCRLResponse(client HTTPClient, cert *x509.Certificate) (*Status, error) {
 	endpoint, err := getCRLDistributionPoint(cert)
 	if err != nil {
