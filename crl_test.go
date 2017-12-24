@@ -41,7 +41,7 @@ func TestFindCert(t *testing.T) {
 	s := new(big.Int)
 	s.SetString("17015245701990644280577643802745589798", 10)
 
-	test := FindCert(s, resp)
+	test := findCert(s, resp)
 
 	if test == nil {
 		t.Errorf("expected to find revoked certificate with serial number %q", s.String())
@@ -56,7 +56,7 @@ func TestFindNonExistingRevokedCert(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	test := FindCert(big.NewInt(0), resp)
+	test := findCert(big.NewInt(0), resp)
 
 	if test != nil {
 		t.Error("did not expect to find a revoked certificate")
@@ -64,7 +64,7 @@ func TestFindNonExistingRevokedCert(t *testing.T) {
 }
 
 func TestGetCRLResponse(t *testing.T) {
-	client = &MockHttpClient{}
+	client = &MockHTTPClient{}
 	cert, err := readCertificate("./testdata/cisco_revoked.pem")
 
 	if err != nil {
@@ -84,7 +84,7 @@ func TestGetCRLResponse(t *testing.T) {
 }
 
 func TestGetCRLResponseNotRevoked(t *testing.T) {
-	client = &MockHttpClient{}
+	client = &MockHTTPClient{}
 	cert, err := readCertificate("./testdata/twitter.pem")
 
 	if err != nil {

@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 func getOCSPServer(cert *x509.Certificate) (string, error) {
@@ -20,43 +19,48 @@ func getOCSPServer(cert *x509.Certificate) (string, error) {
 	return ocspServers[0], nil
 }
 
-func getOCSPResponse(client HttpClient, cert *x509.Certificate, issuer *x509.Certificate) (*ocsp.Response, error) {
+func getOCSPResponse(client HTTPClient, cert *x509.Certificate, issuer *x509.Certificate) (*ocsp.Response, error) {
 	ocspServer, err := getOCSPServer(cert)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	options := ocsp.RequestOptions{Hash: crypto.SHA1}
 	request, err := ocsp.CreateRequest(cert, issuer, &options)
+	if err != nil {
+		return nil, err
+	}
 
 	url, err := url.Parse(ocspServer)
+	if err != nil {
+		return nil, err
+	}
 
 	req, err := http.NewRequest("POST", ocspServer, bytes.NewBuffer(request))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 	req.Host = url.Hostname()
 	req.Header.Set("content-type", "application/ocsp-request")
 
-	response, err := client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, errFailedToFetchOCSPResponse
 	}
-	defer response.Body.Close()
+	defer func() {
+		if cerr := resp.Body.Close(); err == nil {
+			err = cerr
+		}
+	}()
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	parsedResponse, err := ocsp.ParseResponseForCert(body, cert, issuer)
-
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	return parsedResponse, nil
