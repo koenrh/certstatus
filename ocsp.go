@@ -23,24 +23,23 @@ func getOCSPServer(cert *x509.Certificate) (string, error) {
 func getOCSPResponse(client HttpClient, cert *x509.Certificate, issuer *x509.Certificate) (*ocsp.Response, error) {
 	ocspServer, err := getOCSPServer(cert)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	options := ocsp.RequestOptions{Hash: crypto.SHA1}
 	request, err := ocsp.CreateRequest(cert, issuer, &options)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	url, err := url.Parse(ocspServer)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	req, err := http.NewRequest("POST", ocspServer, bytes.NewBuffer(request))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 	req.Host = url.Hostname()
 	req.Header.Set("content-type", "application/ocsp-request")
@@ -53,15 +52,12 @@ func getOCSPResponse(client HttpClient, cert *x509.Certificate, issuer *x509.Cer
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	parsedResponse, err := ocsp.ParseResponseForCert(body, cert, issuer)
-
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	return parsedResponse, nil
