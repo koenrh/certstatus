@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 func getOCSPServer(cert *x509.Certificate) (string, error) {
