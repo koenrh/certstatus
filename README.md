@@ -20,15 +20,23 @@ The only argument you need to provided is the path to an X.509 certificate in
 PEM-encoded format.
 
 ```
-$ certstatus certificate.pem
+# OCSP
+$ certstatus ocsp certificate.pem
 
-Serial number: 56344244886667875955436183757038019206
+Serial number: 582831098329266023459877175593458587837818271346
 
 Status: Revoked
-Reason: Unspecified
-Revoked at: 2017-07-04 18:08:16 +0000 UTC
+Reason: Key compromise
+Revoked at: 2017-06-18 17:57:00 +0000 UTC
 
-Produced at: 2017-07-11 10:25:44 +0000 UTC
-This update: 2017-07-11 10:25:43 +0000 UTC
-Next update: 2017-07-15 10:35:43 +0000 UTC
+Produced at: 2017-12-24 18:22:40 +0000 UTC
+This update: 2017-12-24 18:22:40 +0000 UTC
+Next update: 2017-12-26 18:22:40 +0000 UTC
+
+# CRL
+$ certstatus crl certificate.pem
+Serial number: 582831098329266023459877175593458587837818271346
+
+Status: Revoked
+Revoked at: 2017-06-18 17:57:00 +0000 UTC
 ```
