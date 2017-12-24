@@ -19,7 +19,7 @@ go get -u github.com/koenrh/certstatus
 The only argument you need to provided is the path to an X.509 certificate in
 PEM-encoded format.
 
-```
+```bash
 # OCSP
 $ certstatus ocsp certificate.pem
 
