@@ -77,8 +77,9 @@ func TestGetCRLResponse(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if st.Status != "Revoked" {
-		t.Fatal("err")
+	expected := "Revoked"
+	if st.Status != expected {
+		t.Errorf("expected %q, got %q", expected, st.Status)
 	}
 }
 
@@ -96,7 +97,8 @@ func TestGetCRLResponseNotRevoked(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if st.Status != "Good" {
-		t.Fatal("err")
+	expected := "Good"
+	if st.Status != expected {
+		t.Errorf("expected %q, got %q", expected, st.Status)
 	}
 }
