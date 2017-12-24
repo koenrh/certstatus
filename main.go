@@ -130,7 +130,12 @@ func getIssuerCertificate(client HTTPClient, cert *x509.Certificate) (*x509.Cert
 		if err != nil {
 			return nil, errFailedToGetResource
 		}
-		defer resp.Body.Close()
+
+		defer func() {
+			if cerr := resp.Body.Close(); err == nil {
+				err = cerr
+			}
+		}()
 
 		in, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
