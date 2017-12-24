@@ -18,6 +18,17 @@ func TestGetDistributionPoint(t *testing.T) {
 	}
 }
 
+func TestGetDestributionPointFromCertWithoutCRL(t *testing.T) {
+	cert, _ := readCertificate("./testdata/cloudflare_origin_ca_rsa_root.crt")
+	server, _ := getCRLDistributionPoint(cert)
+
+	expected := ""
+
+	if server != expected {
+		t.Errorf("expected %q, got %q", expected, server)
+	}
+}
+
 func TestFindCert(t *testing.T) {
 	// NOTE: DigiCert SHA2 Extended Validation Server CA CRL
 	crl, _ := ioutil.ReadFile("./testdata/sha2-ev-server-g2.crl")
