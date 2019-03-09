@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# script/tests/gometalinter: Run linters and static analysis
-
-set -e
-
-cd "$(dirname "$0")/../.."
-
-gometalinter --vendor --errors ./...
