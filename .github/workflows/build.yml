@@ -30,7 +30,7 @@ jobs:
           GOROOT: /usr/local/go
         with:
           entrypoint: golangci-lint
-          args: run --enable-all -D lll -D errcheck
+          args: run --enable-all -D lll -D errcheck -D godox
 
       - name: Run tests
         run: go test -mod readonly -race
