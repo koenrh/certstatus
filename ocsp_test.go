@@ -2,9 +2,11 @@ package main
 
 import (
 	"bytes"
-	"golang.org/x/crypto/ocsp"
 	"io/ioutil"
+	"os"
 	"testing"
+
+	"golang.org/x/crypto/ocsp"
 )
 
 func TestGetOCSPResponse(t *testing.T) {
@@ -18,8 +20,9 @@ func TestGetOCSPResponse(t *testing.T) {
 		t.Fatal("Could not read test issuer certificate.")
 	}
 
-	client := &MockHTTPClient{}
-	resp, _ := getOCSPResponse(client, cert, issuer)
+	httpClient := &MockHTTPClient{}
+	client := NewClient(httpClient, os.Stdout)
+	resp, _ := client.GetOCSPResponse(cert, issuer)
 
 	expected := "16190166165489431910151563605275097819"
 
@@ -31,6 +34,7 @@ func TestGetOCSPResponse(t *testing.T) {
 func TestGetOCSPServer(t *testing.T) {
 	cert, _ := readCertificate("./testdata/certificate.pem")
 	server, err := getOCSPServer(cert)
+
 	if server != "http://ocsp.digicert.com" {
 		t.Fatal(err)
 	}
@@ -40,7 +44,7 @@ func TestPrintStatusResponse(t *testing.T) {
 	rawResp, _ := ioutil.ReadFile("./testdata/twitter_ocsp_response_v1.der")
 	resp, _ := ocsp.ParseResponse(rawResp, nil)
 
-	out = new(bytes.Buffer) // capture output
+	out := new(bytes.Buffer) // capture output
 
 	expected := "Serial number: 16190166165489431910151563605275097819\n\n" +
 		"Status: Good\n\n" +
@@ -48,9 +52,12 @@ func TestPrintStatusResponse(t *testing.T) {
 		"This update: 2017-12-23 06:30:33 +0000 UTC\n" +
 		"Next update: 2017-12-30 05:45:33 +0000 UTC\n"
 
-	printStatusResponse(resp)
+	httpClient := &MockHTTPClient{}
+	client := NewClient(httpClient, out)
 
-	got := out.(*bytes.Buffer).String()
+	client.printStatusResponse(resp)
+
+	got := out.String()
 	if got != expected {
 		t.Errorf("expected %q, got %q", expected, got)
 	}
@@ -60,7 +67,7 @@ func TestPrintStatusResponseRevoked(t *testing.T) {
 	rawResp, _ := ioutil.ReadFile("./testdata/cisco_ocsp_response_revoked.der")
 	resp, _ := ocsp.ParseResponse(rawResp, nil)
 
-	out = new(bytes.Buffer) // capture output
+	out := new(bytes.Buffer) // capture output
 
 	expected := "Serial number: 582831098329266023459877175593458587837818271346\n\n" +
 		"Status: Revoked\n" +
@@ -70,9 +77,11 @@ func TestPrintStatusResponseRevoked(t *testing.T) {
 		"This update: 2017-12-23 16:24:32 +0000 UTC\n" +
 		"Next update: 2017-12-25 16:24:32 +0000 UTC\n"
 
-	printStatusResponse(resp)
+	httpClient := &MockHTTPClient{}
+	client := NewClient(httpClient, out)
+	client.printStatusResponse(resp)
 
-	got := out.(*bytes.Buffer).String()
+	got := out.String()
 	if got != expected {
 		t.Errorf("expected %q, got %q", expected, got)
 	}

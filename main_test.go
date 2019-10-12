@@ -6,10 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
-	"strings"
-	"testing"
 )
 
 type MockHTTPClient struct{}
@@ -22,6 +19,7 @@ func (m *MockHTTPClient) Get(url2 string) (*http.Response, error) {
 	response := &http.Response{
 		Body: ioutil.NopCloser(bytes.NewBuffer(dat)),
 	}
+
 	return response, nil
 }
 
@@ -31,59 +29,9 @@ func (m *MockHTTPClient) Do(r *http.Request) (*http.Response, error) {
 		response := &http.Response{
 			Body: ioutil.NopCloser(bytes.NewBuffer(ocspResponseBytes)),
 		}
+
 		return response, nil
 	}
 
 	return nil, errors.New("Unrecognised URL: " + "")
-}
-
-func TestMainOCSP(t *testing.T) {
-	out = new(bytes.Buffer) // capture output
-
-	client = &MockHTTPClient{}
-	os.Args = []string{
-		"certstatus",
-		"ocsp",
-		"./testdata/twitter.pem",
-	}
-	main()
-
-	expected := "Status: Good"
-
-	got := out.(*bytes.Buffer).String()
-	if !strings.Contains(got, expected) {
-		t.Errorf("expected %q, got %q", expected, got)
-	}
-}
-
-func TestGetIssuerCert(t *testing.T) {
-	cert, err := readCertificate("./testdata/certificate.pem")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client := &MockHTTPClient{}
-	issCert, err := getIssuerCertificate(client, cert)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if issCert.Issuer.CommonName != "DigiCert Global Root CA" {
-		t.Fatal(issCert.Issuer.CommonName)
-	}
-}
-
-func TestReadCertificate(t *testing.T) {
-	_, err := readCertificate("./testdata/certificate.pem")
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestCertificateFromBytesNoCertificate(t *testing.T) {
-	in, _ := ioutil.ReadFile("./testdata/private_key.pem")
-	_, err := certificateFromBytes(in)
-	if err == nil {
-		t.Fatal("should return error")
-	}
 }
