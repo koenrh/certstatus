@@ -3,8 +3,10 @@ package main
 import (
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"fmt"
 	"io/ioutil"
 	"math/big"
+	"os"
 )
 
 func getCRLDistributionPoint(cert *x509.Certificate) (string, error) {
@@ -12,11 +14,12 @@ func getCRLDistributionPoint(cert *x509.Certificate) (string, error) {
 	if len(points) == 0 {
 		return "", errNoCRLDistributionPointsFound
 	}
+
 	return points[0], nil
 }
 
-func getCRL(url string) (*pkix.CertificateList, error) {
-	resp, err := client.Get(url)
+func (c *Client) getCRL(url string) (*pkix.CertificateList, error) {
+	resp, err := c.httpClient.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -48,14 +51,24 @@ func findCert(serialNumber *big.Int, crlList *pkix.CertificateList) *pkix.Revoke
 	return nil
 }
 
+func (c *Client) CheckCertificateStatusCRL(cert *x509.Certificate) {
+	st, err := c.GetCRLResponse(cert)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Print(st.String())
+}
+
 // GetCRLResponse returns the CRL status for the specified certificate.
-func GetCRLResponse(client HTTPClient, cert *x509.Certificate) (*Status, error) {
+func (c *Client) GetCRLResponse(cert *x509.Certificate) (*Status, error) {
 	endpoint, err := getCRLDistributionPoint(cert)
 	if err != nil {
 		return nil, err
 	}
 
-	crlList, err := getCRL(endpoint)
+	crlList, err := c.getCRL(endpoint)
 
 	if err != nil {
 		// TODO: return proper error, e.g. 'could not get crl'
