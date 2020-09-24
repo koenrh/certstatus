@@ -20,7 +20,6 @@ func TestGetIssuerCert(t *testing.T) {
 	}
 
 	issCert, err := client.GetIssuerCertificate(cert)
-
 	if err != nil {
 		t.Fatal(err)
 	}

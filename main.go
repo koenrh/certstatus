@@ -41,7 +41,6 @@ func main() {
 	// TODO: move to method that returns both cert + issuer?
 	path := os.Args[2]
 	cert, err := readCertificate(path)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 		os.Exit(1)

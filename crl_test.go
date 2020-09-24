@@ -34,7 +34,6 @@ func TestFindCert(t *testing.T) {
 	// NOTE: DigiCert SHA2 Extended Validation Server CA CRL
 	crl, _ := ioutil.ReadFile("./testdata/sha2-ev-server-g2.crl")
 	resp, err := x509.ParseCRL(crl)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,7 +53,6 @@ func TestFindNonExistingRevokedCert(t *testing.T) {
 	// NOTE: DigiCert SHA2 Extended Validation Server CA CRL
 	crl, _ := ioutil.ReadFile("./testdata/sha2-ev-server-g2.crl")
 	resp, err := x509.ParseCRL(crl)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -70,13 +68,11 @@ func TestGetCRLResponse(t *testing.T) {
 	httpClient := &MockHTTPClient{}
 	client := NewClient(httpClient, os.Stdout)
 	cert, err := readCertificate("./testdata/cisco_revoked.pem")
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	st, err := client.GetCRLResponse(cert)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,13 +87,11 @@ func TestGetCRLResponseNotRevoked(t *testing.T) {
 	httpClient := &MockHTTPClient{}
 	client := NewClient(httpClient, os.Stdout)
 	cert, err := readCertificate("./testdata/twitter.pem")
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	st, err := client.GetCRLResponse(cert)
-
 	if err != nil {
 		t.Fatal(err)
 	}
