@@ -45,8 +45,8 @@ func (c *Client) GetOCSPResponse(cert *x509.Certificate, issuer *x509.Certificat
 	}
 
 	options := ocsp.RequestOptions{Hash: crypto.SHA1}
-	request, err := ocsp.CreateRequest(cert, issuer, &options)
 
+	request, err := ocsp.CreateRequest(cert, issuer, &options)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (c *Client) printStatusResponse(resp *ocsp.Response) {
 }
 
 func statusMessage(code int) string {
-	var statusMessages = map[int]string{
+	statusMessages := map[int]string{
 		ocsp.Good:         "Good",
 		ocsp.Revoked:      "Revoked",
 		ocsp.ServerFailed: "Server failed",
@@ -114,7 +114,7 @@ func statusMessage(code int) string {
 }
 
 func revocationReason(code int) string {
-	var revocationReasonMessages = map[int]string{
+	revocationReasonMessages := map[int]string{
 		ocsp.Unspecified:          "Unspecified",
 		ocsp.KeyCompromise:        "Key compromise",
 		ocsp.CACompromise:         "CA compromise",

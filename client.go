@@ -23,9 +23,7 @@ func NewClient(httpClient HTTPClient, out io.Writer) *Client {
 }
 
 func (c *Client) GetIssuerCertificate(cert *x509.Certificate) (*x509.Certificate, error) {
-	var (
-		issCert *x509.Certificate
-	)
+	var issCert *x509.Certificate
 
 	for _, url := range cert.IssuingCertificateURL {
 		resp, err := c.httpClient.Get(url)
@@ -79,9 +77,9 @@ func certificateFromBytes(bytes []byte) (*x509.Certificate, error) {
 
 func readCertificate(path string) (*x509.Certificate, error) {
 	in, err := ioutil.ReadFile(path)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+
 		return nil, errFailedToReadCertificate
 	}
 
@@ -90,6 +88,7 @@ func readCertificate(path string) (*x509.Certificate, error) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+
 		return nil, errFailedToReadCertificate
 	}
 

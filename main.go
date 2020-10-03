@@ -19,7 +19,7 @@ var (
 	errNoCRLDistributionPointsFound = errors.New("no CRL distribution points found")
 )
 
-// HTTPClient is an interface for fetching HTTP responses
+// HTTPClient is an interface for fetching HTTP responses.
 type HTTPClient interface {
 	Get(string) (*http.Response, error)
 	Do(req *http.Request) (*http.Response, error)
@@ -33,6 +33,7 @@ func main() {
 
 	flag.Parse()
 
+	//nolint:gomnd
 	if flag.NArg() < 2 {
 		flag.Usage()
 		os.Exit(1)
@@ -40,8 +41,8 @@ func main() {
 
 	// TODO: move to method that returns both cert + issuer?
 	path := os.Args[2]
-	cert, err := readCertificate(path)
 
+	cert, err := readCertificate(path)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 		os.Exit(1)

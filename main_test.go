@@ -11,6 +11,8 @@ import (
 
 type MockHTTPClient struct{}
 
+var errUnrecognizedURL = errors.New("unrecognised URL")
+
 func (m *MockHTTPClient) Get(url2 string) (*http.Response, error) {
 	u, _ := url.Parse(url2)
 	p := filepath.Clean(u.Path)
@@ -33,5 +35,5 @@ func (m *MockHTTPClient) Do(r *http.Request) (*http.Response, error) {
 		return response, nil
 	}
 
-	return nil, errors.New("Unrecognised URL: " + "")
+	return nil, errUnrecognizedURL
 }

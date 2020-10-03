@@ -69,7 +69,6 @@ func (c *Client) GetCRLResponse(cert *x509.Certificate) (*Status, error) {
 	}
 
 	crlList, err := c.getCRL(endpoint)
-
 	if err != nil {
 		// TODO: return proper error, e.g. 'could not get crl'
 		return nil, err
