@@ -45,6 +45,7 @@ func (c *Client) GetOCSPResponse(cert *x509.Certificate, issuer *x509.Certificat
 	}
 
 	options := ocsp.RequestOptions{Hash: crypto.SHA1}
+
 	request, err := ocsp.CreateRequest(cert, issuer, &options)
 	if err != nil {
 		return nil, err

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Status holds the (revocation) status for a certificate
+// Status holds the (revocation) status for a certificate.
 type Status struct {
 	SerialNumber *big.Int
 	Status       string

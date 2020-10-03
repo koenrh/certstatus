@@ -79,6 +79,7 @@ func readCertificate(path string) (*x509.Certificate, error) {
 	in, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+
 		return nil, errFailedToReadCertificate
 	}
 
@@ -87,6 +88,7 @@ func readCertificate(path string) (*x509.Certificate, error) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+
 		return nil, errFailedToReadCertificate
 	}
 
