@@ -1,5 +1,5 @@
 module github.com/koenrh/certstatus
 
-require golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
+require golang.org/x/crypto v0.7.0
 
 go 1.18
