@@ -25,9 +25,9 @@ jobs:
           GOPROXY: https://proxy.golang.org
 
       - name: Run linter
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.54
+          version: v2.0
 
       - name: Run tests
         run: go test -mod readonly -race
