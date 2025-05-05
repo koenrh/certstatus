@@ -5,7 +5,7 @@ import (
 	"crypto"
 	"crypto/x509"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -75,7 +75,7 @@ func (c *Client) GetOCSPResponse(cert *x509.Certificate, issuer *x509.Certificat
 		}
 	}()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -88,6 +88,7 @@ func (c *Client) GetOCSPResponse(cert *x509.Certificate, issuer *x509.Certificat
 	return parsedResponse, nil
 }
 
+// nolint:errcheck
 func (c *Client) printStatusResponse(resp *ocsp.Response) {
 	fmt.Fprintf(c.out, "Serial number: %s\n\n", resp.SerialNumber)
 	fmt.Fprintf(c.out, "Status: %s\n", statusMessage(resp.Status))

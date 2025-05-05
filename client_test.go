@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -37,7 +36,7 @@ func TestReadCertificate(t *testing.T) {
 }
 
 func TestCertificateFromBytesNoCertificate(t *testing.T) {
-	in, _ := ioutil.ReadFile("./testdata/private_key.pem")
+	in, _ := os.ReadFile("./testdata/private_key.pem")
 	_, err := certificateFromBytes(in)
 
 	if err == nil {

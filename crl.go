@@ -2,9 +2,8 @@ package main
 
 import (
 	"crypto/x509"
-	"crypto/x509/pkix"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/big"
 	"os"
 )
@@ -18,7 +17,7 @@ func getCRLDistributionPoint(cert *x509.Certificate) (string, error) {
 	return points[0], nil
 }
 
-func (c *Client) getCRL(url string) (*pkix.CertificateList, error) {
+func (c *Client) getCRL(url string) (*x509.RevocationList, error) {
 	resp, err := c.httpClient.Get(url)
 	if err != nil {
 		return nil, err
@@ -30,18 +29,18 @@ func (c *Client) getCRL(url string) (*pkix.CertificateList, error) {
 		}
 	}()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: Check that list is not expired https://goo.gl/e52YPC
-	return x509.ParseCRL(body)
+	return x509.ParseRevocationList(body)
 }
 
-func findCert(serialNumber *big.Int, crlList *pkix.CertificateList) *pkix.RevokedCertificate {
-	for revoked := range crlList.TBSCertList.RevokedCertificates {
-		revCert := crlList.TBSCertList.RevokedCertificates[revoked]
+func findCert(serialNumber *big.Int, crlList *x509.RevocationList) *x509.RevocationListEntry {
+	for revoked := range crlList.RevokedCertificateEntries {
+		revCert := crlList.RevokedCertificateEntries[revoked]
 
 		if serialNumber.Cmp(revCert.SerialNumber) == 0 {
 			return &revCert
