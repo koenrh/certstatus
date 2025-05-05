@@ -5,7 +5,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 )
 
@@ -41,7 +40,7 @@ func (c *Client) GetIssuerCertificate(cert *x509.Certificate) (*x509.Certificate
 			}
 		}()
 
-		in, err := ioutil.ReadAll(resp.Body)
+		in, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, errFailedToReadResponseBody
 		}
@@ -76,7 +75,7 @@ func certificateFromBytes(bytes []byte) (*x509.Certificate, error) {
 }
 
 func readCertificate(path string) (*x509.Certificate, error) {
-	in, err := ioutil.ReadFile(path)
+	in, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
 

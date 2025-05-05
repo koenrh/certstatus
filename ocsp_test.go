@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -41,7 +40,7 @@ func TestGetOCSPServer(t *testing.T) {
 }
 
 func TestPrintStatusResponse(t *testing.T) {
-	rawResp, _ := ioutil.ReadFile("./testdata/twitter_ocsp_response_v1.der")
+	rawResp, _ := os.ReadFile("./testdata/twitter_ocsp_response_v1.der")
 	resp, _ := ocsp.ParseResponse(rawResp, nil)
 
 	out := new(bytes.Buffer) // capture output
@@ -64,7 +63,7 @@ func TestPrintStatusResponse(t *testing.T) {
 }
 
 func TestPrintStatusResponseRevoked(t *testing.T) {
-	rawResp, _ := ioutil.ReadFile("./testdata/cisco_ocsp_response_revoked.der")
+	rawResp, _ := os.ReadFile("./testdata/cisco_ocsp_response_revoked.der")
 	resp, _ := ocsp.ParseResponse(rawResp, nil)
 
 	out := new(bytes.Buffer) // capture output

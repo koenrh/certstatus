@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto/x509"
-	"io/ioutil"
 	"math/big"
 	"os"
 	"testing"
@@ -32,9 +31,9 @@ func TestGetDestributionPointFromCertWithoutCRL(t *testing.T) {
 
 func TestFindCert(t *testing.T) {
 	// NOTE: DigiCert SHA2 Extended Validation Server CA CRL
-	crl, _ := ioutil.ReadFile("./testdata/sha2-ev-server-g2.crl")
+	crl, _ := os.ReadFile("./testdata/sha2-ev-server-g2.crl")
 
-	resp, err := x509.ParseCRL(crl)
+	resp, err := x509.ParseRevocationList(crl)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,9 +51,9 @@ func TestFindCert(t *testing.T) {
 
 func TestFindNonExistingRevokedCert(t *testing.T) {
 	// NOTE: DigiCert SHA2 Extended Validation Server CA CRL
-	crl, _ := ioutil.ReadFile("./testdata/sha2-ev-server-g2.crl")
+	crl, _ := os.ReadFile("./testdata/sha2-ev-server-g2.crl")
 
-	resp, err := x509.ParseCRL(crl)
+	resp, err := x509.ParseRevocationList(crl)
 	if err != nil {
 		t.Fatal(err)
 	}
