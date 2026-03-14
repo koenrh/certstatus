@@ -31,6 +31,7 @@ func (c *Client) GetIssuerCertificate(cert *x509.Certificate) (*x509.Certificate
 		}
 
 		in, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
 		if err != nil {
 			return nil, errFailedToReadResponseBody
 		}
