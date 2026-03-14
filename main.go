@@ -13,7 +13,7 @@ var (
 	errFailedToFetchOCSPResponse    = errors.New("failed to fetch OCSP response")
 	errFailedToGetResource          = errors.New("failed to get resource")
 	errFailedToReadCertificate      = errors.New("failed to read certificate")
-	errFailedToReadResponseBody     = errors.New("failed to response body")
+	errFailedToReadResponseBody     = errors.New("failed to read response body")
 	errNoCertificate                = errors.New("no certificate")
 	errNoIssuerCertificate          = errors.New("no issuer certificate")
 	errNoOCSPServersFound           = errors.New("no OCSP servers found")
