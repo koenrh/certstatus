@@ -12,7 +12,7 @@ go install github.com/koenrh/certstatus@latest
 
 ## Usage
 
-The only argument you need to provided is the path to an X.509 certificate in
+The only argument you need to provide is the path to an X.509 certificate in
 PEM-encoded format.
 
 ```bash
