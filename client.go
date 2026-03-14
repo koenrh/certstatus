@@ -67,18 +67,12 @@ func certificateFromBytes(bytes []byte) (*x509.Certificate, error) {
 func readCertificate(path string) (*x509.Certificate, error) {
 	in, err := os.ReadFile(path)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-
-		return nil, errFailedToReadCertificate
+		return nil, fmt.Errorf("%w: %v", errFailedToReadCertificate, err)
 	}
 
-	var cert *x509.Certificate
-	cert, err = certificateFromBytes(in)
-
+	cert, err := certificateFromBytes(in)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-
-		return nil, errFailedToReadCertificate
+		return nil, fmt.Errorf("%w: %v", errFailedToReadCertificate, err)
 	}
 
 	return cert, nil

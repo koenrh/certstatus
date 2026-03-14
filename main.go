@@ -51,9 +51,15 @@ func main() {
 
 	switch os.Args[1] {
 	case "ocsp":
-		client.CheckCertificateStatusOCSP(cert)
+		if err := client.CheckCertificateStatusOCSP(cert); err != nil {
+			fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+			os.Exit(1)
+		}
 	case "crl":
-		client.CheckCertificateStatusCRL(cert)
+		if err := client.CheckCertificateStatusCRL(cert); err != nil {
+			fmt.Fprintf(os.Stderr, "[error] %v\n", err)
+			os.Exit(1)
+		}
 	default:
 		usage()
 		os.Exit(1)

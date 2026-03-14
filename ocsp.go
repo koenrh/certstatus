@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 
 	"golang.org/x/crypto/ocsp"
 )
@@ -22,20 +21,19 @@ func getOCSPServer(cert *x509.Certificate) (string, error) {
 	return ocspServers[0], nil
 }
 
-func (c *Client) CheckCertificateStatusOCSP(cert *x509.Certificate) {
+func (c *Client) CheckCertificateStatusOCSP(cert *x509.Certificate) error {
 	issuer, err := c.GetIssuerCertificate(cert)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	resp, err := c.GetOCSPResponse(cert, issuer)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	c.printStatusResponse(resp)
+	return nil
 }
 
 func (c *Client) GetOCSPResponse(cert *x509.Certificate, issuer *x509.Certificate) (*ocsp.Response, error) {

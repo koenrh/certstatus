@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"math/big"
-	"os"
 )
 
 func getCRLDistributionPoint(cert *x509.Certificate) (string, error) {
@@ -50,14 +49,14 @@ func findCert(serialNumber *big.Int, crlList *x509.RevocationList) *x509.Revocat
 	return nil
 }
 
-func (c *Client) CheckCertificateStatusCRL(cert *x509.Certificate) {
+func (c *Client) CheckCertificateStatusCRL(cert *x509.Certificate) error {
 	st, err := c.GetCRLResponse(cert)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[error] %v\n", err)
-		os.Exit(1)
+		return err
 	}
 
-	fmt.Print(st.String())
+	fmt.Fprint(c.out, st.String())
+	return nil
 }
 
 // GetCRLResponse returns the CRL status for the specified certificate.
