@@ -82,7 +82,7 @@ func (c *Client) GetOCSPResponse(cert *x509.Certificate, issuer *x509.Certificat
 	return parsedResponse, nil
 }
 
-// nolint:errcheck
+//nolint:errcheck
 func (c *Client) printStatusResponse(resp *ocsp.Response) {
 	fmt.Fprintf(c.out, "Serial number: %s\n\n", resp.SerialNumber)
 	fmt.Fprintf(c.out, "Status: %s\n", statusMessage(resp.Status))
