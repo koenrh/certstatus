@@ -21,7 +21,10 @@ func TestGetOCSPResponse(t *testing.T) {
 
 	httpClient := &MockHTTPClient{}
 	client := NewClient(httpClient, os.Stdout)
-	resp, _ := client.GetOCSPResponse(cert, issuer)
+	resp, err := client.GetOCSPResponse(cert, issuer)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	expected := "16190166165489431910151563605275097819"
 
@@ -31,11 +34,19 @@ func TestGetOCSPResponse(t *testing.T) {
 }
 
 func TestGetOCSPServer(t *testing.T) {
-	cert, _ := readCertificate("./testdata/certificate.pem")
-	server, err := getOCSPServer(cert)
-
-	if server != "http://ocsp.digicert.com" {
+	cert, err := readCertificate("./testdata/certificate.pem")
+	if err != nil {
 		t.Fatal(err)
+	}
+
+	server, err := getOCSPServer(cert)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "http://ocsp.digicert.com"
+	if server != expected {
+		t.Errorf("expected %q, got %q", expected, server)
 	}
 }
 
