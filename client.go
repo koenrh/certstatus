@@ -30,16 +30,6 @@ func (c *Client) GetIssuerCertificate(cert *x509.Certificate) (*x509.Certificate
 			continue
 		}
 
-		if err != nil {
-			return nil, errFailedToGetResource
-		}
-
-		defer func() {
-			if cerr := resp.Body.Close(); err == nil {
-				err = cerr
-			}
-		}()
-
 		in, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, errFailedToReadResponseBody
