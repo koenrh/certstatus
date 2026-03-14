@@ -18,7 +18,7 @@ func TestGetDistributionPoint(t *testing.T) {
 	}
 }
 
-func TestGetDestributionPointFromCertWithoutCRL(t *testing.T) {
+func TestGetDistributionPointFromCertWithoutCRL(t *testing.T) {
 	cert, _ := readCertificate("./testdata/cloudflare_origin_ca_rsa_root.crt")
 	server, _ := getCRLDistributionPoint(cert)
 
