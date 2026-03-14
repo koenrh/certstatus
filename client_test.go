@@ -14,10 +14,6 @@ func TestGetIssuerCert(t *testing.T) {
 	httpClient := &MockHTTPClient{}
 	client := NewClient(httpClient, os.Stdout)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	issCert, err := client.GetIssuerCertificate(cert)
 	if err != nil {
 		t.Fatal(err)
