@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"math/big"
+	"strings"
 	"time"
 )
 
@@ -16,18 +16,18 @@ type Status struct {
 }
 
 func (s Status) String() string {
-	buf := new(bytes.Buffer)
+	var b strings.Builder
 
-	fmt.Fprintf(buf, "Serial number: %s\n\n", s.SerialNumber)
-	fmt.Fprintf(buf, "Status: %s\n", s.Status)
+	fmt.Fprintf(&b, "Serial number: %s\n\n", s.SerialNumber)
+	fmt.Fprintf(&b, "Status: %s\n", s.Status)
 
 	if s.Reason != "" {
-		fmt.Fprintf(buf, "Reason: %s\n", s.Reason)
+		fmt.Fprintf(&b, "Reason: %s\n", s.Reason)
 	}
 
 	if !s.RevokedAt.IsZero() {
-		fmt.Fprintf(buf, "Revoked at: %s\n", s.RevokedAt.String())
+		fmt.Fprintf(&b, "Revoked at: %s\n", s.RevokedAt.String())
 	}
 
-	return buf.String()
+	return b.String()
 }
