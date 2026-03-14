@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 )
 
 var (
@@ -48,7 +49,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	httpClient := &http.Client{}
+	httpClient := &http.Client{Timeout: 10 * time.Second}
 	client := NewClient(httpClient, os.Stdout)
 
 	switch os.Args[1] {
