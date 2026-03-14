@@ -14,11 +14,7 @@ type Client struct {
 }
 
 func NewClient(httpClient HTTPClient, out io.Writer) *Client {
-	client := &Client{}
-	client.httpClient = httpClient
-	client.out = out
-
-	return client
+	return &Client{httpClient: httpClient, out: out}
 }
 
 func (c *Client) GetIssuerCertificate(cert *x509.Certificate) (*x509.Certificate, error) {
