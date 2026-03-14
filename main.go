@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -26,21 +25,19 @@ type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
+func usage() {
+	fmt.Fprintf(os.Stderr, "usage: %s <command> <pem>\n\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "Commands:\n")
+	fmt.Fprintf(os.Stderr, "  ocsp    Check certificate revocation status via OCSP\n")
+	fmt.Fprintf(os.Stderr, "  crl     Check certificate revocation status via CRL\n")
+}
+
 func main() {
-	flag.Usage = func() {
-		fmt.Printf("usage: %s <command> <pem>\n", os.Args[0])
-		flag.PrintDefaults()
-	}
-
-	flag.Parse()
-
-	//nolint:gomnd
-	if flag.NArg() < 2 {
-		flag.Usage()
+	if len(os.Args) < 3 {
+		usage()
 		os.Exit(1)
 	}
 
-	// TODO: move to method that returns both cert + issuer?
 	path := os.Args[2]
 
 	cert, err := readCertificate(path)
@@ -58,7 +55,7 @@ func main() {
 	case "crl":
 		client.CheckCertificateStatusCRL(cert)
 	default:
-		flag.PrintDefaults()
+		usage()
 		os.Exit(1)
 	}
 }
