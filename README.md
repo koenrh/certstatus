@@ -1,6 +1,6 @@
 # Certificate status
 
-![](https://github.com/koenrh/certstatus/workflows/build/badge.svg)
+[![build](https://github.com/koenrh/certstatus/actions/workflows/build.yml/badge.svg)](https://github.com/koenrh/certstatus/actions/workflows/build.yml)
 
 This is a little utility to obtain the (revocation) status of an X.509 certificate.
 
