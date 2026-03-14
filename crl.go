@@ -22,7 +22,7 @@ func (c *Client) getCRL(url string) (*x509.RevocationList, error) {
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -49,7 +49,7 @@ func (c *Client) CheckCertificateStatusCRL(cert *x509.Certificate) error {
 		return err
 	}
 
-	fmt.Fprint(c.out, st.String())
+	_, _ = fmt.Fprint(c.out, st.String())
 	return nil
 }
 
