@@ -22,11 +22,7 @@ func (c *Client) getCRL(url string) (*x509.RevocationList, error) {
 		return nil, err
 	}
 
-	defer func() {
-		if cerr := resp.Body.Close(); err == nil {
-			err = cerr
-		}
-	}()
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

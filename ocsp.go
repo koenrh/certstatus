@@ -67,11 +67,7 @@ func (c *Client) GetOCSPResponse(cert *x509.Certificate, issuer *x509.Certificat
 		return nil, errFailedToFetchOCSPResponse
 	}
 
-	defer func() {
-		if cerr := resp.Body.Close(); err == nil {
-			err = cerr
-		}
-	}()
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
