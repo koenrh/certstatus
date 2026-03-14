@@ -38,11 +38,9 @@ func (c *Client) getCRL(url string) (*x509.RevocationList, error) {
 }
 
 func findCert(serialNumber *big.Int, crlList *x509.RevocationList) *x509.RevocationListEntry {
-	for revoked := range crlList.RevokedCertificateEntries {
-		revCert := crlList.RevokedCertificateEntries[revoked]
-
-		if serialNumber.Cmp(revCert.SerialNumber) == 0 {
-			return &revCert
+	for _, entry := range crlList.RevokedCertificateEntries {
+		if serialNumber.Cmp(entry.SerialNumber) == 0 {
+			return &entry
 		}
 	}
 
